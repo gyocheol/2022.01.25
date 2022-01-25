@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <script>
+        function ajaxTest(){
+
+            var xhr = new XMLHttpRequest()
+
+            // readystate가 바뀌는 이벤트가 발생할 때 마다 function 함수 호출 / callback 함수(function) 호출
+            xhr.onreadystatechange = function(){
+                // http 상태 코드
+                // 4 : 요청의 완료
+                if(xhr.readyState == 4){
+                    // 200 : 정상 응답
+                    if (xhr.status == 200)
+                    // alert(xhr.responseText)
+                    var respXml = xhr.responseXML
+                    // console.log(respXml)
+                    // console.log(typeof(respXml))
+
+                    var table = document.getElementById('tb')
+                    var rows = respXml.getElementsByTagName('ROW')
+                    // console.log((rows)); // <- nodelist
+
+                    // 1. column 이름 만들기
+                    var columnTr = document.createElement("tr")
+                    for (var i = 0; i < rows[0].children.length; i++){
+                        // console.log(rows[0].children[i].nodeName)
+                        var th = document.createElement("th")
+                        th.appendChild(document.createTextNode(rows[0].children[i].nodeName))
+
+                        columnTr.appendChild(th)
+                    }
+                    table.appendChild(columnTr)
+
+                    // 2. data 만들기
+                    // row 107번 들고오기
+                    for (var i = 0; i < rows.length; i++){
+                        var tr = document.createElement("tr")
+                        for (var j = 0; j < rows[i].children.length; j++){
+                            var td = document.createElement("td")
+                            td.appendChild(document.createTextNode(rows[i].children[j].textContent))
+                            tr.appendChild(td)
+                        }
+                        table.appendChild(tr)
+                    }
+
+
+                }
+            }
+
+            // get방식으로 요청, 해당 경로에
+            xhr.open('GET', 'emplist.xml')
+            // 실제로 요청하는 것(위치 상관x)
+            xhr.send()
+        }
+        // 내가 풀어본것
+        // function tableVal(){
+        //     var doc = document.ROW
+        //     var vals = [doc.EMPLOYEE_ID.value, doc.LAST_NAME.value, doc.EMAIL.value, doc.PHONE_NUMBER.value, doc.HIRE_DATE.value]
+        //     document.getElementById("addtr").appendChild(createRow(vals))
+        // }
+
+        // function createRow(vals){
+        //     var tr = document.createElement("tr")
+
+        //     for (var i = 0; i < vals.length; i++){
+        //         var td = document.createElement("td")
+        //         td.textContent = vals[i]
+        //         tr.appendChild(td)
+        //     }
+        // }
+    </script>
+</head>
+<body>
+
+    <!-- 
+        ajax : Asynchronous Javascript And Xml
+        비 동기 통신
+     -->
+
+    <button onclick="ajaxTest()">ajax</button>
+    <!-- <button onclick="tableVal()">추가</button> -->
+
+    <table id="tb" border="1"></table>
+
+</body>
+</html>
